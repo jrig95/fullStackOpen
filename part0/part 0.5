@@ -1,0 +1,13 @@
+browser -> server HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+server -> browser spa HTML-code
+browser -> server HTML GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server -> browser main.css
+browser -> server HTML GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server -> browser spa.js
+
+NOTE: browser starts executing spa.js code to request JSON data from the server
+
+browser -> server HTML GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server -> browser [{"content":"woman life freedom","date":"2023-01-03T21:01:30.083Z"}, ...]
+
+NOTE: Browser then executes an event handler that will allow the notes to render on the page
