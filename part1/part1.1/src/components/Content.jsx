@@ -2,18 +2,17 @@ import React from 'react'
 import Part from './Part.jsx'
 
 const Content = (props) => {
+  const parts = props.parts
   return (
     <div>
+      { parts.map (p => (
       <p>
-        <Part part={props.part1} exercise={props.exercises1} />
+        <Part part={p.name} exercise={p.exercises} />
       </p>
-      <p>
-        <Part part={props.part2} exercise={props.exercises2} />
-      </p>
-      <p>
-        <Part part={props.part3} exercise={props.exercises3} />
-      </p>
+      )
+  )}
     </div>
+
   );
 }
 
