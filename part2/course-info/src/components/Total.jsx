@@ -3,9 +3,10 @@ import React from 'react'
 const Total = (props) => {
   const exercises = props.parts
   console.log(exercises)
+  const total = exercises.reduce((acc, cur) => acc + cur, 0)
   return (
 
-      <p>Number of exercises {exercises[0] + exercises[1] + exercises[2]}</p>
+      <p  style={{fontWeight: 'bold'}}>Number of exercises {total}</p>
 
   );
 }
