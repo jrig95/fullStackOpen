@@ -15,13 +15,19 @@ const App = () => {
   const newPerson = (event) => {
     event.preventDefault()
     console.log("button clicked", event.target)
+    const personExists = (persons.some((person)=> person.name.toLocaleLowerCase === newName.toLocaleLowerCase ))
+
+    if (!personExists) {
     const personObject = {
       name: newName
     }
-
     setPersons(persons.concat(personObject))
     setNewName('')
+  } else {
+    alert(`${newName} is already added to phonebook`)
   }
+
+}
 
 
   return (
