@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Person from "./components/person/Person";
 import Filter from "./components/filter/Filter";
 import Form from "./components/form/Form";
+import personService from "./services/persons";
 import axios from "axios";
 
 const App = () => {
@@ -12,11 +13,11 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
+    personService
+    .getAll()
+    .then(allPersons => {
       console.log('promise fulfilled')
-      setPersons(response.data)
+      setPersons(allPersons)
     })
   }, [])
 
@@ -39,28 +40,58 @@ const App = () => {
   const newPerson = (event) => {
     event.preventDefault();
     console.log("button clicked", event.target);
-    const personExists = persons.some(
+    const personExists = persons.find(
       (person) => person.name.toLocaleLowerCase() === newName.toLocaleLowerCase()
     );
 
-    if (!personExists) {
-      const maxId = persons.length > 0
-    ? Math.max(...persons.map(person => person.id))
-    : 0
+    if (personExists){
+      const updatedPerson = {...personExists, number: newNumber}
+      const confirmUpdate = window.confirm(`${newName} is already in the phonebook, would you like to update the number?`)
+
+      if (confirmUpdate) {
+        personService
+        .update(personExists.id, updatedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== personExists.id ? person : returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => {
+          console.error('there is an error', error)
+        })
+      }
+    } else {
       const personObject = {
         name: newName,
         number: newNumber,
-        id: maxId + 1
       };
-      setPersons(persons.concat(personObject));
+
+      personService
+      .create(personObject)
+      .then(returnPersons => {
+      setPersons(persons.concat(returnPersons));
       setNewName("");
       setNewNumber("")
-    } else {
-      alert(`${newName} is already added to phonebook`);
+      })
     }
   };
 
   const filteredPersons = persons.filter((person) => person.name.toLowerCase().includes(searchFilter.toLowerCase()))
+
+  const deletePerson = (id, name) => {
+    const confirmDelete = window.confirm(`Delete ${name}?`)
+
+    if (confirmDelete) {
+    axios
+    .destroy(id)
+    .then(() => {
+      setPersons(persons.filter(person => person.id !== id))
+    })
+    .catch(error => {
+      console.error("There is an error", error)
+    })
+  }
+  }
 
   return (
     <div>
@@ -71,8 +102,9 @@ const App = () => {
       <Form newPerson={newPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
       {filteredPersons.map((person) => (
-        <Person key={person.id} name={person.name} number={person.number} />
+        <Person key={person.id} id={person.id} name={person.name} number={person.number} deletePerson={deletePerson}/>
       ))}
+
     </div>
   );
 };
