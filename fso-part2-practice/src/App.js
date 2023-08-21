@@ -64,7 +64,7 @@ const App = () => {
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
-    notes.filter(note => note.id !== id)
+    setNotes(prevNotes => prevNotes.filter(note => note.id !== id))
    })
   }
 
