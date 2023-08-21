@@ -1,0 +1,7 @@
+PUT http://localhost:3001/api/notes/1
+Content-Type: application/json
+
+{
+  "content": "updated content using rest client for vs code",
+  "important": false
+}
